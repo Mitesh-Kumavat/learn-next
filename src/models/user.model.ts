@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import { stringify } from "querystring";
 
 export interface IUser {
     firstName: string;
@@ -62,7 +63,7 @@ userSchema.methods.comparePassword = async function (password: string) {
 
 // create jwt token
 userSchema.methods.createAccessToken = async function () {
-    this.accessToken = await jwt.sign({ _id: this._id }, process.env.JWT_SECRET!);
+    this.accessToken = await jwt.sign({ _id: this._id }, process.env.JWT_SECRET!, { expiresIn: '30d' });
     await this.save();
     return this.accessToken;
 }
