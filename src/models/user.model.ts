@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import { stringify } from "querystring";
 
 export interface IUser {
     firstName: string;
@@ -16,37 +15,30 @@ export interface IUser {
 
 const userSchema = new mongoose.Schema<IUser>({
     firstName: {
-        required: true,
+        required: [true, "First name is required"],
         type: String,
-        min: 2,
-        max: 255,
-        error: "First name is required"
+        minLength: 2,
     },
     lastName: {
-        required: true,
+        required: [true, "Last name is required"],
         type: String,
-        min: 2,
-        max: 255,
-        error: "Last name is required"
+        minlength: 2,
     },
     email: {
-        required: true,
+        required: [true, "Email is required"],
         type: String,
-        min: 6,
-        max: 255,
-        pattern: /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/,
+        match: [/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/, "Invalid email address"],
     },
     password: {
-        required: true,
+        required: [true, "Password is required"],
         type: String,
-        error: "Password is required"
+        minlength: 6,
     },
     accessToken: {
         type: String,
         default: "",
     }
 }, { timestamps: true });
-
 
 // before saving the user to the database, hash the password
 userSchema.pre("save", async function (next) {
@@ -68,6 +60,6 @@ userSchema.methods.createAccessToken = async function () {
     return this.accessToken;
 }
 
-const User = mongoose.models?.User || mongoose.model("Users", userSchema);
+const User = mongoose.models?.Users || mongoose.model("Users", userSchema);
 
 export default User;

@@ -1,27 +1,29 @@
 import mongoose from "mongoose";
+import User from "./user.model";
 
 const postSchema = new mongoose.Schema({
     title: {
-        required: true,
+        required: [true, "Title is required"],
         type: String,
-        min: [2, "Title is too short"],
-        max: [255, "Title is too long"],
-        error: "Title is required"
+        minLength: [2, "Title is too short"],
     },
     description: {
-        required: true,
+        required: [true, "Description is required"],
         type: String,
-        min: [6, "Description is too short"],
-        error: "Description is required"
+        minLength: [6, "Description is too short"],
+    },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Users"
     },
     likes: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "User"
+            ref: "Users"
         }
     ]
 }, { timestamps: true });
 
-const Post = mongoose.models?.Post || mongoose.model("Posts", postSchema);
+const Post = mongoose.models?.Posts || mongoose.model("Posts", postSchema);
 
 export default Post;

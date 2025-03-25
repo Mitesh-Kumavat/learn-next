@@ -1,13 +1,21 @@
-import Link from 'next/link'
-import React from 'react'
+import Hero from "@/components/hero"
+import FeaturesSection from "@/components/feature-section"
+import FaqSection from "@/components/faq"
+import Cta from "../components/cta"
+import Footer from "@/components/footer"
+import Header from "@/components/header"
 
-const page = () => {
+export default function LandingPage() {
   return (
-    <div className='w-fulll h-full flex m-auto flex-col mt-56 gap-12 justify-center items-center'>
-      <h1 className='text-5xl text-amber-400 text-center text-balance w-full'>Create posts in this app by just login into the app</h1>
-      <Link href={'/login'} className='px-8 py-2 hover: text-black text-xl font-medium  bg-white rounded-md '>Login</Link>
+    <div className="w-auto mx-auto flex min-h-screen flex-col">
+      <Header />
+      <main className="container mx-auto md:px-8">
+        <Hero />
+        <FeaturesSection />
+        <FaqSection />
+        <Cta />
+      </main>
+      <Footer />
     </div>
   )
 }
-
-export default page

@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "./utils/verifyToken";
+import ApiResponse from "./utils/ApiResponse";
 
-const protectedRoutes = ["/dashboard", "/api/logout", "/api/me", "/api/posts/create"];
+const protectedRoutes = ["/dashboard", "/api/logout", "/api/me", "/api/posts/create", "/api/posts", "/api/posts/delete", "/api/posts/update"];
 
 export async function middleware(req: NextRequest) {
     const { nextUrl, cookies } = req;
     const token = cookies.get("token")?.value;
-    console.log(token, "FROM THE MIDDLEWARE");
 
     const isProtectedRoute = protectedRoutes.some((route) =>
         nextUrl.pathname.startsWith(route)
@@ -14,12 +14,12 @@ export async function middleware(req: NextRequest) {
 
     if (isProtectedRoute) {
         if (!token) {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+            const response = new ApiResponse("Unauthorized user", 401, { error: "Invalid token" });
+            return NextResponse.json(response, { status: 401 });
         }
 
         try {
             const decodedToken: any = await verifyToken(token);
-            console.log("DECODE TOKEN:", decodedToken.payload._id);
 
             if (!decodedToken || !decodedToken.payload._id) {
                 return NextResponse.json({ error: "Invalid Token" }, { status: 403 });
@@ -36,6 +36,3 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
 }
 
-export const config = {
-    matcher: ["/dashboard/:path*", "/api/logout", "/api/me", "/api/posts/create"],
-};
