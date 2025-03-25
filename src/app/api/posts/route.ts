@@ -1,9 +1,9 @@
 import { connectDB } from "@/config/db";
 import Post from "@/models/post.model";
 import ApiResponse from "@/utils/ApiResponse";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextResponse) {
+export async function GET(_req: NextRequest) {
     try {
         await connectDB();
         const posts = await Post.find().populate("userId", "firstName lastName email");

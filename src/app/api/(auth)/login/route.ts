@@ -1,14 +1,18 @@
 import ApiResponse from "@/utils/ApiResponse";
 import { connectDB } from "../../../../config/db";
 import { NextRequest, NextResponse } from "next/server";
-import User from "@/models/user.model";
+import User, { IUser } from "@/models/user.model";
 import { cookies } from 'next/headers'
 
+export interface LoginRequest {
+    email: string;
+    password: string;
+}
 
 export async function POST(req: NextRequest) {
 
     try {
-        const { email, password } = await req.json();
+        const { email, password }: LoginRequest = await req.json();
         if (!email || !password) {
             const response = new ApiResponse("Email and password are required", 400);
             return NextResponse.json(response, { status: 400 });

@@ -28,7 +28,7 @@ export async function middleware(req: NextRequest) {
             const res = NextResponse.next();
             res.headers.set("x-user-id", decodedToken.payload._id); // Attach userId in header
             return res;
-        } catch (error) {
+        } catch (_error) {
             return NextResponse.json({ error: "Invalid Token" }, { status: 403 });
         }
     }
