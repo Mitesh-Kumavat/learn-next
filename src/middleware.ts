@@ -2,17 +2,31 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "./utils/verifyToken";
 import ApiResponse from "./utils/ApiResponse";
 
-const protectedRoutes = ["/dashboard", "/api/logout", "/api/me", "/api/posts/create", "/api/posts", "/api/posts/delete", "/api/posts/update"];
+const protectedAPIRoutes = ["/api/logout", "/api/me", "/api/posts/create", "/api/posts"];
+
+const protectedFrontendRoutes = ["/dashboard",];
 
 export async function middleware(req: NextRequest) {
     const { nextUrl, cookies } = req;
     const token = cookies.get("token")?.value;
+    const absoluteLoginURL = `${nextUrl.origin}/login`;
+    const absoluteDashboardURL = `${nextUrl.origin}/dashboard`;
 
-    const isProtectedRoute = protectedRoutes.some((route) =>
+    const isProtectedAPIRoute = protectedAPIRoutes.some((route) =>
         nextUrl.pathname.startsWith(route)
     );
 
-    if (isProtectedRoute) {
+    const isProtectedFrontendRoute = protectedFrontendRoutes.some((route) =>
+        nextUrl.pathname.startsWith(route)
+    );
+
+    if (nextUrl.pathname === "/login" || nextUrl.pathname === "/signup") {
+        if (token) {
+            return NextResponse.redirect(absoluteDashboardURL);
+        }
+    }
+
+    if (isProtectedAPIRoute) {
         if (!token) {
             const response = new ApiResponse("Unauthorized user", 401, { error: "Invalid token" });
             return NextResponse.json(response, { status: 401 });
@@ -33,6 +47,11 @@ export async function middleware(req: NextRequest) {
         }
     }
 
+    if (isProtectedFrontendRoute) {
+        if (!token) {
+            return NextResponse.redirect(absoluteLoginURL);
+        }
+    }
+
     return NextResponse.next();
 }
-

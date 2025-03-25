@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { MessageSquare } from "lucide-react"
 import axios from "axios"
+import { toast } from "sonner"
 
 export default function LoginPage() {
     const router = useRouter()
@@ -19,6 +20,7 @@ export default function LoginPage() {
         email: "",
         password: "",
     })
+    const [error, setError] = useState("");
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
@@ -31,13 +33,17 @@ export default function LoginPage() {
 
         try {
             const response = await axios.post("/api/login", formData)
-            console.log("Login successful:", response.data)
+            console.log("Login successful:", response.data.data)
             if (response.status !== 200) {
-                throw new Error("Login failed")
+                setError("Login failed")
+                toast("Login failed")
                 return;
             }
+            toast("Login successful")
             router.push("/dashboard")
-        } catch (error) {
+        } catch (error: any) {
+            setError(error.response.data.message)
+            toast.error(`Login failed : ${error.response.data.message}`)
             console.error("Login failed:", error)
         } finally {
             setIsLoading(false)
@@ -70,24 +76,23 @@ export default function LoginPage() {
                                 onChange={handleChange}
                             />
                         </div>
-                        <div className="space-y-2">
+                        <div className="space-y-2 mb-2">
                             <div className="flex items-center justify-between">
                                 <Label htmlFor="password">Password</Label>
-                                <Link href="#" className="text-sm text-primary hover:underline">
-                                    Forgot password?
-                                </Link>
                             </div>
                             <Input
                                 id="password"
                                 name="password"
                                 type="password"
+                                placeholder="********"
                                 required
                                 value={formData.password}
                                 onChange={handleChange}
                             />
                         </div>
+                        {error && <div className="text-red-500 text-sm">{error}</div>}
                     </CardContent>
-                    <CardFooter className="flex flex-col space-y-4">
+                    <CardFooter className="flex flex-col space-y-4 mt-6">
                         <Button type="submit" className="w-full" disabled={isLoading}>
                             {isLoading ? "Logging in..." : "Login"}
                         </Button>
