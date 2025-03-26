@@ -33,13 +33,19 @@ export async function POST(req: NextRequest) {
         }
 
         const token = await user.createAccessToken();
+        const finalUser = {
+            _id: user._id,
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+        }
         const cookieStore = await cookies()
         cookieStore.set({
             name: "token",
             value: token,
             httpOnly: true,
         })
-        const response = new ApiResponse("Login successful", 200, { token });
+        const response = new ApiResponse("Login successful", 200, finalUser);
         return NextResponse.json(response, { status: 200 });
     } catch (error) {
         console.log(error);

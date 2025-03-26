@@ -3,8 +3,7 @@ import { verifyToken } from "./utils/verifyToken";
 import ApiResponse from "./utils/ApiResponse";
 
 const protectedAPIRoutes = ["/api/logout", "/api/me", "/api/posts/create", "/api/posts"];
-
-const protectedFrontendRoutes = ["/dashboard",];
+const protectedFrontendRoutes = ["/dashboard", "dashboard/create-post", "dashboard/search", "dashboard/liked-posts"];
 
 export async function middleware(req: NextRequest) {
     const { nextUrl, cookies } = req;
@@ -20,10 +19,8 @@ export async function middleware(req: NextRequest) {
         nextUrl.pathname.startsWith(route)
     );
 
-    if (nextUrl.pathname === "/login" || nextUrl.pathname === "/signup") {
-        if (token) {
-            return NextResponse.redirect(absoluteDashboardURL);
-        }
+    if ((nextUrl.pathname === "/login" || nextUrl.pathname === "/signup" || nextUrl.pathname === "/") && token) {
+        return NextResponse.redirect(absoluteDashboardURL);
     }
 
     if (isProtectedAPIRoute) {
@@ -47,10 +44,8 @@ export async function middleware(req: NextRequest) {
         }
     }
 
-    if (isProtectedFrontendRoute) {
-        if (!token) {
-            return NextResponse.redirect(absoluteLoginURL);
-        }
+    if (isProtectedFrontendRoute && !token) {
+        return NextResponse.redirect(absoluteLoginURL);
     }
 
     return NextResponse.next();
