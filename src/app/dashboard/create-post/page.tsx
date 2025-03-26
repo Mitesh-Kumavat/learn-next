@@ -38,6 +38,7 @@ export default function CreatePostPage() {
                 description: "Your post has been created successfully.",
             })
 
+            router.push("/dashboard")
         } catch (error: Error | any) {
             console.log(error.response.data.message);
             toast("Error", {

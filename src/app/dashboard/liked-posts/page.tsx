@@ -19,6 +19,12 @@ export default function LikedPosts() {
                     toast("No liked posts found.");
                     return;
                 }
+
+                if (res.data.data.length === 0) {
+                    toast("No liked posts found.");
+                    setPosts([]);
+                    return;
+                }
                 setPosts(res.data.data);
             } catch (error) {
                 toast("Error fetching liked posts.");
@@ -30,9 +36,14 @@ export default function LikedPosts() {
         fetchLikedPosts();
     }, []);
 
+
     return (
         <div className="space-y-6">
             <h2 className="text-xl font-bold">Liked Posts</h2>
+
+            {!loading && posts.length === 0 && (
+                <p className="text-gray-500 text-center">No liked posts found.</p>
+            )}
             {loading ? (
                 <>
                     <Skeleton className="h-36 w-full" />
