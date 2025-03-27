@@ -21,7 +21,7 @@ export default function RootLayout({
                 <MainSidebar />
                 <SidebarInset >
                     <Header />
-                    <main className="p-6 mt-16">{children}</main>
+                    <main className="p-6">{children}</main>
                 </SidebarInset>
             </SidebarProvider>
         </div>
