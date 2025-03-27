@@ -1,4 +1,3 @@
-import { SidebarTrigger } from "@/components/ui/sidebar"
 import type React from "react"
 import type { Metadata } from "next"
 import { MainSidebar } from "@/components/main-sidebar"
@@ -20,9 +19,9 @@ export default function RootLayout({
         <div className="flex overflow-hidden h-fit w-full">
             <SidebarProvider>
                 <MainSidebar />
-                <SidebarInset className="bg-background">
+                <SidebarInset >
                     <Header />
-                    <main className="flex-1 p-4 mt-16">{children}</main>
+                    <main className="p-6 mt-16">{children}</main>
                 </SidebarInset>
             </SidebarProvider>
         </div>
